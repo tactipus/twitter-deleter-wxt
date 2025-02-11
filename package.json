@@ -20,6 +20,6 @@
     "wxt": "^0.19.13"
   },
   "dependencies": {
-    "rettiwt-api": "^4.1.4"
+    "rettiwt-api": "^4.2.0"
   }
 }
