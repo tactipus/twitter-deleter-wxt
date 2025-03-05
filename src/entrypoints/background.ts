@@ -37,6 +37,12 @@ export default defineBackground(() => {
 
   }
 
+  //get http request headers
+  async function getHeaders(url) {
+    const request_headers = await fetch(url)
+
+  }
+
   // Listener for messages from popup
   browser.runtime.onMessage.addListener((request, sender, respond) => {
     if (request.action === 'getCookies') {
