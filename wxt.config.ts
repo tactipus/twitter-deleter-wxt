@@ -12,7 +12,7 @@ export default defineConfig({
     }
   }),
   manifest: {
-    "permissions": ["cookies"],
+    "permissions": ["cookies", "webRequest"],
     "host_permissions": ["*://x.com/*"],
   },
 });

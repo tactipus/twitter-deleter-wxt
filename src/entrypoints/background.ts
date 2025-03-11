@@ -14,7 +14,6 @@ export default defineBackground(() => {
   async function getCookies() {
     // Getting the cookies for the given domain
     let cookies = await browser.cookies.getAll({ domain: domain });
-    console.log(cookies);
         
     // Filter out required cookies
     cookies = cookies.filter(item => item.name == 'auth_token' || item.name == 'ct0' || item.name == 'kdt' || item.name == 'twid');
@@ -32,16 +31,29 @@ export default defineBackground(() => {
       // Encoding the cookies to base64 to get key
       // key = btoa(key);
     }
-      console.log(key);
 	    return key;
 
   }
 
   //get http request headers
-  async function getHeaders(url) {
-    const request_headers = await fetch(url)
-
+  function getHeaders(e) {
+    const bearer = "";
+    const headers = e.requestHeaders;
+    if (headers["domain"] == domain) {
+        bearer = headers["bearer"];
+        
+    }
+    e.requestHeaders.forEach((header) =>{
+    console.log(header);
+   });
   }
+
+  browser.webRequest.onBeforeSendHeaders.addListener(
+    getHeaders,
+    {urls: ["<all_urls>"]},
+    ["requestHeaders"],
+  );
+
 
   // Listener for messages from popup
   browser.runtime.onMessage.addListener((request, sender, respond) => {
