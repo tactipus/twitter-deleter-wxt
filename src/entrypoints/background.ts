@@ -36,40 +36,55 @@ export default defineBackground(() => {
   }
 
   //get http request headers
-  function getHeaders(e) {
-    const bearer = "";
-    const headers = e.requestHeaders;
-    if (headers["domain"] == domain) {
-        bearer = headers["bearer"];
+  // function getHeaders(e) {
+  //   const bearer = "";
+  //   const headers = e.requestHeaders;
+  //   if (headers["domain"] == domain) {
+  //       bearer = headers["bearer"];
         
-    }
-    e.requestHeaders.forEach((header) =>{
-    console.log(header);
-   });
-  }
+  //   }
+  //   e.requestHeaders.forEach((header) =>{
+  //   console.log(header);
+  //  });
+  // }
 
-  browser.webRequest.onBeforeSendHeaders.addListener(
-    getHeaders,
-    {urls: ["<all_urls>"]},
-    ["requestHeaders"],
-  );
+  // browser.webRequest.onBeforeSendHeaders.addListener(
+  //   getHeaders,
+  //   {urls: ["<all_urls>"]},
+  //   ["requestHeaders"],
+  // );
 
 
   // Listener for messages from popup
-  browser.runtime.onMessage.addListener((request, sender, respond) => {
-    if (request.action === 'getCookies') {
-      getCookies().then(key => {
-        // If key generation was successful
-        if (key.length) {
-          respond({ success: true, key: key })
-        }
-        // If key generation failed
-        else {
-          throw new Error();
-        }
-      }).catch(err => respond({ success: false }));
+  // browser.runtime.onMessage.addListener((request, sender, respond) => {
+  //   if (request.action === 'getCookies') {
+  //     getCookies().then(key => {
+  //       // If key generation was successful
+  //       if (key.length) {
+  //         respond({ success: true, key: key })
+  //       }
+  //       // If key generation failed
+  //       else {
+  //         throw new Error();
+  //       }
+  //     }).catch(err => respond({ success: false }));
         
-      return true;
+  //     return true;
+  //   }
+  // }); 
+
+  function insertString(tab) {
+    // browser.scripting.executeScript
+    const search_input = document.querySelector('[aria-label="Search query"]');
+    search_input.value.innerHTML = "cat";
+  }
+
+  //same but experimental
+  browser.runtime.onMessage.addListener(
+    function (request, sender, sendResponse) {
+      if (request.action == "insertString") {
+        insertString(request.data.tab);
+      }
     }
-  }); 
+  );
 });

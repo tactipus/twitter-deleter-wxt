@@ -1,97 +1,97 @@
-var authorization = "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA";
-var ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:135.0) Gecko/20100101 Firefox/135.0"
-var client_tid = "2TMcZdhGGDDq0VW553J1QgGIG2gOm/tt5EthIbfAov9Pzw1hNIyE+lYqiqOlt5CGdLzjtNpO4TqxM7jZ6cABUjiMWUAl2g"; 
-var client_uuid = "c737bd83-2f41-44bc-aa83-a28ddc2be085"; 
-// var csrf_token = getCookie("ct0");
-var random_resource = "uYU5M2i12UhDvDTzN6hZPg";
-var random_resource_old_tweets = "H8OOoI-5ZE4NxgRr8lfyWg"
-var language_code = navigator.language.split("-")[0]
-var tweets_to_delete = []
-// var user_id = getCookie("twid").substring(4);
-var username = "la_ZorraNegra" // replace with your username
-var stop_signal = undefined
-var twitter_archive_content = undefined
-var twitter_archive_loading_confirmed = false
+// var authorization = "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA";
+// var ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:135.0) Gecko/20100101 Firefox/135.0"
+// var client_tid = "2TMcZdhGGDDq0VW553J1QgGIG2gOm/tt5EthIbfAov9Pzw1hNIyE+lYqiqOlt5CGdLzjtNpO4TqxM7jZ6cABUjiMWUAl2g"; 
+// var client_uuid = "c737bd83-2f41-44bc-aa83-a28ddc2be085"; 
+// // var csrf_token = getCookie("ct0");
+// var random_resource = "uYU5M2i12UhDvDTzN6hZPg";
+// var random_resource_old_tweets = "H8OOoI-5ZE4NxgRr8lfyWg"
+// var language_code = navigator.language.split("-")[0]
+// var tweets_to_delete = []
+// // var user_id = getCookie("twid").substring(4);
+// var username = "la_ZorraNegra" // replace with your username
+// var stop_signal = undefined
+// var twitter_archive_content = undefined
+// var twitter_archive_loading_confirmed = false
 
-var delete_options = {
-	/*  from_archive: If you downloaded your archive from Twitter, set this to true.
-		You will be prompt to upload the tweets.js file from it.
-		Advantage is that this is much more reliable and faster.
-		You can combine this with options: unretweet, match_any_keywords, tweets_to_ignore, after/before date
-		others will be ignored
-	*/
-	"from_archive":false,
-	/*  unretweet: seems obvious, but it unretweet if set to true */
-	"unretweet":true,
-	/* do_not_remove_pinned_tweet: THIS CAN FAIL. Twitter has too many different way to format their response that I cannot guarantee this to work 100%
-	It should work for newer tweets. HOWEVER, use the "tweets_to_ignore" below and put in your pinned tweet ID, this will work 100%.
-	'why do you make this option then', this is a safeguard for people that forgot to add their pinned tweet in the ignore list.
-	*/
-	"do_not_remove_pinned_tweet":true,
-	/* delete_message_with_url_only: self explanatory, but will delete tweets that contain links */
-	"delete_message_with_url_only":false,
-	/* delete_specific_ids_only: Array of tweet IDs that the script will delete. The script will not delete anything else than these IDs. Any other option will be ignored.
-	a tweet id is the number you see on the right of the url: https://x.com/USERNAME/status/1695001000000000
-	an example of how the array can look like : ["1695001000000000", "1303001000000000"] don't forget the quotes ""
-	*/
-	"delete_specific_ids_only":[""],
-	/*
-		match_any_keywords : if any of the strings is found, delete the tweet. It's OR not AND. Example : ["hello", "hi", "yo"]
-		if no words are given, it will match all. Can be combined with delete_message_with_url_only
-		links shouldn't be used as keywords.
-	*/
-	"match_any_keywords":[""],
-	/*
-		tweets_to_ignore : give all the tweet ids that you want to keep.
-		To find the id of the tweet, click on it, then copy the number you find in the url
-		it looks like that : https://x.com/USERNAME/status/1695001000000000, the id here is 1695001000000000
-		It expects strings, so add the double-quotes around it, like that : ["1695001000000000"], you can give multiple ids ofc it's an array
-	*/
-	"tweets_to_ignore":[
-		"00000000000000", // these
-		"111111111111111", // ids
-		"222222222222" // are examples, you can safely keep them or replace them by your own ids.
-	],
-	/* old_tweets : IF the script worked without any error but haven't deleted some old tweets, set this to true.*/
-	"old_tweets":true,
-	/*
-		after_date // before_date : allows you to delete tweets that belong in a specific time frame
-		In the example below, tweets that were made before 2100-01-01 AND after 1900-01-01 will be deleted. (these dates are not included. It's AFTER and BEFORE)
-		Let's say you want to delete tweets from past 6 months. Today is September 19th 2023.
-		You would set after_date to 2023-03-18 (effectively 6 months ago) and before_date 2023-09-20 (tomorrow's date. So it deletes tweets from today too) 
-	*/
-	"after_date":new Date('1900-01-01'), // year-month-day
-	"before_date":new Date('2025-02-20') // year-month-day
-}
+// var delete_options = {
+// 	/*  from_archive: If you downloaded your archive from Twitter, set this to true.
+// 		You will be prompt to upload the tweets.js file from it.
+// 		Advantage is that this is much more reliable and faster.
+// 		You can combine this with options: unretweet, match_any_keywords, tweets_to_ignore, after/before date
+// 		others will be ignored
+// 	*/
+// 	"from_archive":false,
+// 	/*  unretweet: seems obvious, but it unretweet if set to true */
+// 	"unretweet":true,
+// 	/* do_not_remove_pinned_tweet: THIS CAN FAIL. Twitter has too many different way to format their response that I cannot guarantee this to work 100%
+// 	It should work for newer tweets. HOWEVER, use the "tweets_to_ignore" below and put in your pinned tweet ID, this will work 100%.
+// 	'why do you make this option then', this is a safeguard for people that forgot to add their pinned tweet in the ignore list.
+// 	*/
+// 	"do_not_remove_pinned_tweet":true,
+// 	/* delete_message_with_url_only: self explanatory, but will delete tweets that contain links */
+// 	"delete_message_with_url_only":false,
+// 	/* delete_specific_ids_only: Array of tweet IDs that the script will delete. The script will not delete anything else than these IDs. Any other option will be ignored.
+// 	a tweet id is the number you see on the right of the url: https://x.com/USERNAME/status/1695001000000000
+// 	an example of how the array can look like : ["1695001000000000", "1303001000000000"] don't forget the quotes ""
+// 	*/
+// 	"delete_specific_ids_only":[""],
+// 	/*
+// 		match_any_keywords : if any of the strings is found, delete the tweet. It's OR not AND. Example : ["hello", "hi", "yo"]
+// 		if no words are given, it will match all. Can be combined with delete_message_with_url_only
+// 		links shouldn't be used as keywords.
+// 	*/
+// 	"match_any_keywords":[""],
+// 	/*
+// 		tweets_to_ignore : give all the tweet ids that you want to keep.
+// 		To find the id of the tweet, click on it, then copy the number you find in the url
+// 		it looks like that : https://x.com/USERNAME/status/1695001000000000, the id here is 1695001000000000
+// 		It expects strings, so add the double-quotes around it, like that : ["1695001000000000"], you can give multiple ids ofc it's an array
+// 	*/
+// 	"tweets_to_ignore":[
+// 		"00000000000000", // these
+// 		"111111111111111", // ids
+// 		"222222222222" // are examples, you can safely keep them or replace them by your own ids.
+// 	],
+// 	/* old_tweets : IF the script worked without any error but haven't deleted some old tweets, set this to true.*/
+// 	"old_tweets":true,
+// 	/*
+// 		after_date // before_date : allows you to delete tweets that belong in a specific time frame
+// 		In the example below, tweets that were made before 2100-01-01 AND after 1900-01-01 will be deleted. (these dates are not included. It's AFTER and BEFORE)
+// 		Let's say you want to delete tweets from past 6 months. Today is September 19th 2023.
+// 		You would set after_date to 2023-03-18 (effectively 6 months ago) and before_date 2023-09-20 (tomorrow's date. So it deletes tweets from today too) 
+// 	*/
+// 	"after_date":new Date('1900-01-01'), // year-month-day
+// 	"before_date":new Date('2025-02-20') // year-month-day
+// }
 
-let cookies = "";
+// let cookies = "";
 
 // Handles click event for getting API-Key
-document.getElementById('get-key').addEventListener('click', () => {
-	browser.runtime.sendMessage({ action: 'getCookies' }, response => {
-		// Getting the output area
-		let output = document.getElementById('key-output');
+// document.getElementById('get-key').addEventListener('click', () => {
+// 	browser.runtime.sendMessage({ action: 'getCookies' }, response => {
+// 		// Getting the output area
+// 		let output = document.getElementById('key-output');
 		
-		if (response.success) {
-			// let decoded = atob(response.key);
-			output = response.key;
-		}
-		else {
-			output.textContent = "Failed to get key! Please try again.";
-		}
+// 		if (response.success) {
+// 			// let decoded = atob(response.key);
+// 			output = response.key;
+// 		}
+// 		else {
+// 			output.textContent = "Failed to get key! Please try again.";
+// 		}
 
-		let auth_token = output[0];
-		let csrf_token = output[1];
-		let user_id = output[3];
-	});
-});
+// 		let auth_token = output[0];
+// 		let csrf_token = output[1];
+// 		let user_id = output[3];
+// 	});
+// });
 
 
 
 // Handles copying the key using the button
-document.getElementById('copy-key').addEventListener('click', () => {
-	navigator.clipboard.writeText(document.getElementById('key-output').value);
-})
+// document.getElementById('copy-key').addEventListener('click', () => {
+// 	navigator.clipboard.writeText(document.getElementById('key-output').value);
+// })
 
 // function buildAcceptLanguageString() {
 // 	const languages = navigator.languages;
@@ -670,3 +670,21 @@ document.getElementById('copy-key').addEventListener('click', () => {
 
 // console.log("DELETION COMPLETE (if error happened before this may be not true)")
 
+//
+//
+// scraper mode ############
+//
+//
+
+let searchButton = document.getElementById('search-field');
+
+searchButton.addEventListener('click', () => {
+	browser.tabs.query({
+        active: true,
+        currentWindow: true
+    }, function (tabs) {
+        browser.runtime.sendMessage({ action: "insertElement", data: { tab: tabs[0]} }).then(() => {
+            window.close();
+        })
+    });
+});
