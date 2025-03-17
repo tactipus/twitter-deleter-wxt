@@ -75,16 +75,31 @@ export default defineBackground(() => {
 
   function insertString(tab) {
     // browser.scripting.executeScript
-    const search_input = document.querySelector('[aria-label="Search query"]');
-    search_input.value.innerHTML = "cat";
+    browser.scripting.executeScript({target: {tabId: tab.id}, files:['popup/main.ts']});
   }
 
   //same but experimental
-  browser.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
-      if (request.action == "insertString") {
-        insertString(request.data.tab);
-      }
+  browser.runtime.onMessage.addListener((request, sender, respond) => {
+    if (request.action == "insertString") {
+      insertString(request.data.tab);
+    }
+
+
+
+      // if (request.action === 'insertString') {
+      //   getCookies().then(key => {
+      //     // If key generation was successful
+      //     if (key.length) {
+      //       respond({ success: true, key: key })
+      //     }
+      //     // If key generation failed
+      //     else {
+      //       throw new Error();
+      //     }
+      //   }).catch(err => respond({ success: false }));
+          
+      //   return true;
+      // };
     }
   );
 });

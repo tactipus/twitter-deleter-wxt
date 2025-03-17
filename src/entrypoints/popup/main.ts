@@ -677,14 +677,21 @@
 //
 
 let searchButton = document.getElementById('search-field');
+const search_input = document.querySelector('[aria-label="Search query"]');
 
 searchButton.addEventListener('click', () => {
 	browser.tabs.query({
         active: true,
         currentWindow: true
     }, function (tabs) {
-        browser.runtime.sendMessage({ action: "insertElement", data: { tab: tabs[0]} }).then(() => {
-            window.close();
+        browser.runtime.sendMessage({ action: "insertString", data: { tab: tabs[0]} })
         })
-    });
 });
+
+function GetAllElements(search_input) {
+    
+    search_input.value.innerHTML = "cat";
+
+    return elements;
+}
+  
