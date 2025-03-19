@@ -677,7 +677,7 @@
 //
 
 let searchButton = document.getElementById('search-field');
-const search_input = document.querySelector('[aria-label="Search query"]');
+
 
 searchButton.addEventListener('click', () => {
 	browser.tabs.query({
@@ -687,11 +687,4 @@ searchButton.addEventListener('click', () => {
         browser.runtime.sendMessage({ action: "insertString", data: { tab: tabs[0]} })
         })
 });
-
-function GetAllElements(search_input) {
-    
-    search_input.value.innerHTML = "cat";
-
-    return elements;
-}
   

@@ -12,7 +12,13 @@ export default defineConfig({
     }
   }),
   manifest: {
-    "permissions": ["cookies", "webRequest"],
+    "permissions": ["cookies", "webRequest", "storage", "tabs", "activeTab", "scripting"],
     "host_permissions": ["*://x.com/*"],
+    "web_accessible_resources": [
+      {
+        "matches": ["*://x.com/*"],
+        "resources": ["content.ts"]
+      }
+    ],
   },
 });
