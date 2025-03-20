@@ -75,11 +75,11 @@ export default defineBackground(() => {
 
   function insertString(tab) {
     // browser.scripting.executeScript
-    browser.scripting.executeScript({target: {tabId: tab.id}, files:['./popup/main.ts']});
+    browser.scripting.executeScript({target: {tabId: tab.id}, files:['./content-scripts/content.js']});
   }
 
   //same but experimental
-  browser.runtime.onMessage.addListener((request, sender, respond) => {
+  browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action == "insertString") {
       insertString(request.data.tab);
     }
