@@ -678,9 +678,9 @@
 
 let searchButton = document.getElementById('search-field');
 
-
 searchButton.addEventListener('click', () => {
-	browser.tabs.query({
+	console.log("abc");
+    browser.tabs.query({
         active: true,
         currentWindow: true
     }, function (tabs) {

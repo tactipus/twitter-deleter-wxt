@@ -75,7 +75,7 @@ export default defineBackground(() => {
 
   function insertString(tab) {
     // browser.scripting.executeScript
-    browser.scripting.executeScript({target: {tabId: tab.id}, files:['popup/main.ts']});
+    browser.scripting.executeScript({target: {tabId: tab.id}, files:['./popup/main.ts']});
   }
 
   //same but experimental
@@ -83,9 +83,6 @@ export default defineBackground(() => {
     if (request.action == "insertString") {
       insertString(request.data.tab);
     }
-
-
-
       // if (request.action === 'insertString') {
       //   getCookies().then(key => {
       //     // If key generation was successful
