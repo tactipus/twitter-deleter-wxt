@@ -2,11 +2,16 @@ export default defineContentScript({
   matches: ['*://x.com/*'],
   
   main() {
-    const search_input = document.querySelector('[aria-label="Search query"]');
+    const search_input = document.querySelector('[aria-label="Búsqueda"]');
     
-    function insertWords(search_input) {
-      search_input.value.innerHTML = "cat";
-}
+    console.log("hello, content!");
+    
+    function insertWords(input) {
+      console.log("hello, content!");
+      input.value.innerHTML = "cat";
+    }
+
+    insertWords(search_input);
   },
 });
 

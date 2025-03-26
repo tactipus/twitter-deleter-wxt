@@ -17,7 +17,7 @@ declare global {
   const defineWxtPlugin: typeof import('wxt/sandbox')['defineWxtPlugin']
   const fakeBrowser: typeof import('wxt/testing')['fakeBrowser']
   const injectScript: typeof import('wxt/client')['injectScript']
-  const setupCounter: typeof import('C:/Users/paula/Desktop/GitHub/twitter-deleter-wxt/src/components/counter')['setupCounter']
+  const setupCounter: typeof import('/Users/jvMoreno/Desktop/GitHub/twitter-deleter-wxt/src/components/counter')['setupCounter']
   const storage: typeof import('wxt/storage')['storage']
   const useAppConfig: typeof import('wxt/client')['useAppConfig']
 }

@@ -80,18 +80,10 @@ export default defineBackground(() => {
 
   function insertString(tab, dateRange: { start: string, end: string }) {
     // First inject the content script
-    console.log("insertString-working");
     browser.scripting.executeScript({
       target: { tabId: tab.id },
       files: ['./content-scripts/content.js']
-    }).then(() => {
-      // After script is injected, send the date range to the content script
-      browser.tabs.sendMessage(tab.id, {
-        action: "filterAndDelete",
-        dateRange: dateRange
-      });
-    });
-    console.log("insertString-working-end");
+    }).then(() => console.log("insertString-working-end"));    
   }
 
   //same but experimental

@@ -679,7 +679,6 @@
 let searchButton = document.getElementById('send');
 
 searchButton.addEventListener('click', () => {
-	console.log("abc");
     // browser.tabs.query({
     //     active: true,
     //     currentWindow: true
