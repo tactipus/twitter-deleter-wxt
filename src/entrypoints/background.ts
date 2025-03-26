@@ -73,16 +73,40 @@ export default defineBackground(() => {
   //   }
   // }); 
 
-  function insertString(tab) {
-    // browser.scripting.executeScript
-    browser.scripting.executeScript({target: {tabId: tab.id}, files:['./content-scripts/content.js']});
+  // function insertString(tab, range) {
+  //   // browser.scripting.executeScript
+  //   browser.scripting.executeScript({target: {tabId: tab.id}, files:['./content-scripts/content.js']});
+  // }
+
+  function insertString(tab, dateRange: { start: string, end: string }) {
+    // First inject the content script
+    console.log("insertString-working");
+    browser.scripting.executeScript({
+      target: { tabId: tab.id },
+      files: ['./content-scripts/content.js']
+    }).then(() => {
+      // After script is injected, send the date range to the content script
+      browser.tabs.sendMessage(tab.id, {
+        action: "filterAndDelete",
+        dateRange: dateRange
+      });
+    });
+    console.log("insertString-working-end");
   }
 
   //same but experimental
   browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action == "insertString") {
-      insertString(request.data.tab);
-    }
+    // if (request.action == "insertString") {
+    //   insertString(request.data.tab);
+    // }
+    console.log("background-working");
+    if (request.action === "insertString") {
+      const { tab, dateRange } = request.data;
+      // Now you have access to:
+      // dateRange.start - start date
+      // dateRange.end - end date
+      insertString(tab, dateRange);
+  }
       // if (request.action === 'insertString') {
       //   getCookies().then(key => {
       //     // If key generation was successful
@@ -99,4 +123,5 @@ export default defineBackground(() => {
       // };
     }
   );
+
 });

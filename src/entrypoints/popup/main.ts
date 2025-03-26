@@ -676,15 +676,41 @@
 //
 //
 
-let searchButton = document.getElementById('search-field');
+let searchButton = document.getElementById('send');
 
 searchButton.addEventListener('click', () => {
 	console.log("abc");
+    // browser.tabs.query({
+    //     active: true,
+    //     currentWindow: true
+    // }, function (tabs) {
+    //     browser.runtime.sendMessage({ action: "insertString", data: { tab: tabs[0]} })
+    //     })
+    
     browser.tabs.query({
         active: true,
         currentWindow: true
     }, function (tabs) {
-        browser.runtime.sendMessage({ action: "insertString", data: { tab: tabs[0]} })
-        })
+        browser.runtime.sendMessage({ 
+            action: "insertString", 
+            data: { 
+                tab: tabs[0],
+                dateRange: {
+                    start: startDateInput.value,
+                    end: endDateInput.value
+                }
+            }
+        });
+    });
 });
   
+let startDateInput = document.getElementById('startDate') as HTMLInputElement;
+let endDateInput = document.getElementById('endDate') as HTMLInputElement;
+
+// Set default dates (e.g., last 30 days)
+const today = new Date();
+const thirtyDaysAgo = new Date();
+thirtyDaysAgo.setDate(today.getDate() - 30);
+
+startDateInput.value = thirtyDaysAgo.toISOString().split('T')[0];
+endDateInput.value = today.toISOString().split('T')[0];
