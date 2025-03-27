@@ -677,6 +677,16 @@
 //
 
 let searchButton = document.getElementById('send');
+let startDateInput = document.getElementById('startDate') as HTMLInputElement;
+let endDateInput = document.getElementById('endDate') as HTMLInputElement;
+
+// Set default dates (e.g., last 30 days)
+const today = new Date();
+const thirtyDaysAgo = new Date();
+thirtyDaysAgo.setDate(today.getDate() - 30);
+
+startDateInput.value = thirtyDaysAgo.toISOString().split('T')[0];
+endDateInput.value = today.toISOString().split('T')[0];
 
 searchButton.addEventListener('click', () => {
     // browser.tabs.query({
@@ -703,13 +713,3 @@ searchButton.addEventListener('click', () => {
     });
 });
   
-let startDateInput = document.getElementById('startDate') as HTMLInputElement;
-let endDateInput = document.getElementById('endDate') as HTMLInputElement;
-
-// Set default dates (e.g., last 30 days)
-const today = new Date();
-const thirtyDaysAgo = new Date();
-thirtyDaysAgo.setDate(today.getDate() - 30);
-
-startDateInput.value = thirtyDaysAgo.toISOString().split('T')[0];
-endDateInput.value = today.toISOString().split('T')[0];

@@ -83,7 +83,13 @@ export default defineBackground(() => {
     browser.scripting.executeScript({
       target: { tabId: tab.id },
       files: ['./content-scripts/content.js']
-    }).then(() => console.log("insertString-working-end"));    
+    }).then(() => {
+      // After injection, send the dateRange to the content script
+      browser.tabs.sendMessage(tab.id, {
+        action: "insertString",
+        dateRange: dateRange
+      });    
+    });
   }
 
   //same but experimental
@@ -91,7 +97,7 @@ export default defineBackground(() => {
     // if (request.action == "insertString") {
     //   insertString(request.data.tab);
     // }
-    console.log("background-working");
+
     if (request.action === "insertString") {
       const { tab, dateRange } = request.data;
       // Now you have access to:
