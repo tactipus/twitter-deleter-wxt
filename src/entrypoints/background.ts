@@ -94,10 +94,6 @@ export default defineBackground(() => {
 
   //same but experimental
   browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    // if (request.action == "insertString") {
-    //   insertString(request.data.tab);
-    // }
-
     if (request.action === "insertString") {
       const { tab, dateRange } = request.data;
       // Now you have access to:
