@@ -688,14 +688,7 @@ thirtyDaysAgo.setDate(today.getDate() - 30);
 startDateInput.value = thirtyDaysAgo.toISOString().split('T')[0];
 endDateInput.value = today.toISOString().split('T')[0];
 
-searchButton.addEventListener('click', () => {
-    // browser.tabs.query({
-    //     active: true,
-    //     currentWindow: true
-    // }, function (tabs) {
-    //     browser.runtime.sendMessage({ action: "insertString", data: { tab: tabs[0]} })
-    //     })
-    
+searchButton.addEventListener('click', () => {    
     browser.tabs.query({
         active: true,
         currentWindow: true
