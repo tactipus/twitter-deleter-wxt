@@ -642,25 +642,25 @@ export default defineContentScript({
 
     if (delete_options["from_archive"] == true) {
       while (twitter_archive_loading_confirmed == false) {
-        await sleep(1000)
+        sleep(1000)
       }
       tweets_to_delete = parseTweetsFromArchive(twitter_archive_content)
       console.log(tweets_to_delete)
-      await delete_tweets(tweets_to_delete)
+      delete_tweets(tweets_to_delete)
     }
 
 
     else if (delete_options["delete_specific_ids_only"].length == 1 && delete_options["delete_specific_ids_only"][0].length == 0) {
       while (next != "finished" && stop_signal != true) {
-        entries = await fetch_tweets(next);
-        next = await log_tweets(entries);
-        await delete_tweets(tweets_to_delete)
+        entries = fetch_tweets(next);
+        next = og_tweets(entries);
+        delete_tweets(tweets_to_delete)
         tweets_to_delete = []
-        await sleep(3000);
+        sleep(3000);
       }
     }
     else {
-      await delete_tweets(delete_options["delete_specific_ids_only"]);
+      delete_tweets(delete_options["delete_specific_ids_only"]);
     }
 
     console.log("DELETION COMPLETE (if error happened before this may be not true)")

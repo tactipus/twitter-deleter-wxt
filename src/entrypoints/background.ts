@@ -78,7 +78,7 @@ export default defineBackground(() => {
   //   browser.scripting.executeScript({target: {tabId: tab.id}, files:['./content-scripts/content.js']});
   // }
 
-  function insertString(tab, dateRange: { start: string, end: string }) {
+  function insertString(tab, dateRange, inputs: { start: string, end: string }) {
     // First inject the content script
     browser.scripting.executeScript({
       target: { tabId: tab.id },
@@ -87,7 +87,8 @@ export default defineBackground(() => {
       // After injection, send the dateRange to the content script
       browser.tabs.sendMessage(tab.id, {
         action: "insertString",
-        dateRange: dateRange
+        dateRange: dateRange,
+        inputs: inputs
       });    
     });
   }
@@ -95,11 +96,11 @@ export default defineBackground(() => {
   //same but experimental
   browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "insertString") {
-      const { tab, dateRange } = request.data;
+      const { tab, dateRange, inputs } = request.data;
       // Now you have access to:
       // dateRange.start - start date
       // dateRange.end - end date
-      insertString(tab, dateRange);
+      insertString(tab, dateRange, inputs);
   }
       // if (request.action === 'insertString') {
       //   getCookies().then(key => {

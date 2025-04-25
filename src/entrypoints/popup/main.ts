@@ -53,10 +53,10 @@ function buildAcceptLanguageString() {
 //
 
 let searchButton = document.getElementById('send');
-let endDateInput = document.getElementById('username') as HTMLInputElement;
+let usernameInput = document.getElementById('username') as HTMLInputElement;
 let startDateInput = document.getElementById('startDate') as HTMLInputElement;
 let endDateInput = document.getElementById('endDate') as HTMLInputElement;
-let endDateInput = document.getElementById('keywords') as HTMLInputElement;
+let keywordsInput = document.getElementById('keywords') as HTMLInputElement;
 
 // Set default dates (e.g., last 30 days)
 const today = new Date();
@@ -78,7 +78,11 @@ searchButton.addEventListener('click', () => {
                 dateRange: {
                     start: startDateInput.value,
                     end: endDateInput.value
-                }
+                },
+				inputs: {
+					username: usernameInput.value,
+					keywords: keywordsInput.value
+				}
             }
         });
     });
