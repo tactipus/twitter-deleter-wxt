@@ -11,10 +11,12 @@ document.getElementById('get-key').addEventListener('click', () => {
 		else {
 			output.textContent = "Failed to get key! Please try again.";
 		}
-
+		
+		console.log(output);
 		let auth_token = output[0];
 		let csrf_token = output[1];
 		let user_id = output[3];
+		console.log(auth_token, csrf_token, user_id);
 	});
 });
 

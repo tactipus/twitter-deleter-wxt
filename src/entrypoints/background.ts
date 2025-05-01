@@ -14,7 +14,7 @@ export default defineBackground(() => {
   async function getCookies() {
     // Getting the cookies for the given domain
     let cookies = await browser.cookies.getAll({ domain: domain });
-        
+    console.log(cookies);
     // Filter out required cookies
     cookies = cookies.filter(item => item.name == 'auth_token' || item.name == 'ct0' || item.name == 'kdt' || item.name == 'twid');
 
@@ -31,54 +31,52 @@ export default defineBackground(() => {
       // Encoding the cookies to base64 to get key
       // key = btoa(key);
     }
-	    return key;
+
+    console.log(key);
+    return key;
 
   }
 
   //get http request headers
-  // function getHeaders(e) {
-  //   const bearer = "";
-  //   const headers = e.requestHeaders;
-  //   if (headers["domain"] == domain) {
-  //       bearer = headers["bearer"];
+  function getHeaders(e) {
+    let bearer = "";
+    let headers = e.requestHeaders;
+    if (headers["domain"] == domain) {
+        bearer = headers["bearer"];
         
-  //   }
-  //   e.requestHeaders.forEach((header) =>{
-  //   console.log(header);
-  //  });
-  // }
+    }
+    e.requestHeaders.forEach((header) =>{
+    console.log(header);
+   });
+  }
 
-  // browser.webRequest.onBeforeSendHeaders.addListener(
-  //   getHeaders,
-  //   {urls: ["<all_urls>"]},
-  //   ["requestHeaders"],
-  // );
+  browser.webRequest.onBeforeSendHeaders.addListener(
+    getHeaders,
+    {urls: ["<all_urls>"]},
+    ["requestHeaders"],
+  );
 
 
   // Listener for messages from popup
-  // browser.runtime.onMessage.addListener((request, sender, respond) => {
-  //   if (request.action === 'getCookies') {
-  //     getCookies().then(key => {
-  //       // If key generation was successful
-  //       if (key.length) {
-  //         respond({ success: true, key: key })
-  //       }
-  //       // If key generation failed
-  //       else {
-  //         throw new Error();
-  //       }
-  //     }).catch(err => respond({ success: false }));
+  browser.runtime.onMessage.addListener((request, sender, respond) => {
+    if (request.action === 'getCookies') {
+      getCookies().then(key => {
+        // If key generation was successful
+        if (key.length) {
+          respond({ success: true, key: key })
+        }
+        // If key generation failed
+        else {
+          throw new Error();
+        }
+      }).catch(err => respond({ success: false }));
         
-  //     return true;
-  //   }
-  // }); 
+      return true;
+    }
+  }); 
 
-  // function insertString(tab, range) {
-  //   // browser.scripting.executeScript
-  //   browser.scripting.executeScript({target: {tabId: tab.id}, files:['./content-scripts/content.js']});
-  // }
 
-  function insertString(tab, dateRange, inputs: { start: string, end: string }) {
+  function insertString(tab, dateRange: { start: string, end: string }, inputs: {username: string, keywords: string}) {
     // First inject the content script
     browser.scripting.executeScript({
       target: { tabId: tab.id },
