@@ -7,6 +7,7 @@ export default defineBackground(() => {
   * The domain whose cookies are to be fetched.
   */
   const domain = 'x.com';
+  let bearer_token = "";
 
   /**
   * Gets cookies for x.com and encoding them to base64.
@@ -14,7 +15,7 @@ export default defineBackground(() => {
   async function getCookies() {
     // Getting the cookies for the given domain
     let cookies = await browser.cookies.getAll({ domain: domain });
-    console.log(cookies);
+    // console.log(cookies);
     // Filter out required cookies
     cookies = cookies.filter(item => item.name == 'auth_token' || item.name == 'ct0' || item.name == 'kdt' || item.name == 'twid');
 
@@ -32,7 +33,7 @@ export default defineBackground(() => {
       // key = btoa(key);
     }
 
-    console.log(key);
+    // console.log(key);
     return key;
 
   }
@@ -45,9 +46,8 @@ export default defineBackground(() => {
         bearer = headers["bearer"];
         
     }
-    e.requestHeaders.forEach((header) =>{
-    console.log(header);
-   });
+
+    bearer_token = headers[1].value
   }
 
   browser.webRequest.onBeforeSendHeaders.addListener(
@@ -76,15 +76,17 @@ export default defineBackground(() => {
   }); 
 
 
-  function insertString(tab, dateRange: { start: string, end: string }, inputs: {username: string, keywords: string}) {
+  function deleteTweets(tab, bearer, cookies, dateRange: { start: string, end: string }, inputs: {username: string, keywords: string}) {
     // First inject the content script
     browser.scripting.executeScript({
       target: { tabId: tab.id },
-      files: ['./content-scripts/content.js']
+      files: ['./content-scripts/content.js'],
     }).then(() => {
       // After injection, send the dateRange to the content script
       browser.tabs.sendMessage(tab.id, {
-        action: "insertString",
+        action: "deleteTweets",
+        bearer: bearer,
+        cookies: cookies,
         dateRange: dateRange,
         inputs: inputs
       });    
@@ -93,12 +95,10 @@ export default defineBackground(() => {
 
   //same but experimental
   browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === "insertString") {
-      const { tab, dateRange, inputs } = request.data;
-      // Now you have access to:
-      // dateRange.start - start date
-      // dateRange.end - end date
-      insertString(tab, dateRange, inputs);
+    if (request.action === "deleteTweets") {
+      const { tab, cookies, dateRange, inputs } = request.data;
+      deleteTweets(tab, bearer_token, cookies, dateRange, inputs);
+      console.log("send to script");
   }
       // if (request.action === 'insertString') {
       //   getCookies().then(key => {

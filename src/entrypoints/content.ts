@@ -4,90 +4,102 @@ export default defineContentScript({
   main() {    
     // Listen for messages from background script
     browser.runtime.onMessage.addListener((message) => {
-      if (message.action === "insertString") {
-        var authorization = "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA";
-        var ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:135.0) Gecko/20100101 Firefox/135.0"
-        var client_tid = "2TMcZdhGGDDq0VW553J1QgGIG2gOm/tt5EthIbfAov9Pzw1hNIyE+lYqiqOlt5CGdLzjtNpO4TqxM7jZ6cABUjiMWUAl2g"; 
-        var client_uuid = "c737bd83-2f41-44bc-aa83-a28ddc2be085"; 
-        // var csrf_token = getCookie("ct0");
-        var random_resource = "uYU5M2i12UhDvDTzN6hZPg";
-        var random_resource_old_tweets = "H8OOoI-5ZE4NxgRr8lfyWg"
-        var language_code = navigator.language.split("-")[0]
-        var tweets_to_delete = []
-        // var user_id = getCookie("twid").substring(4);
-        // replace with your username
-        var stop_signal = undefined
-        var twitter_archive_content = undefined
-        var twitter_archive_loading_confirmed = false
+      if (message.action === "deleteTweets") {
+        // var authorization = "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA";
+        // var ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:135.0) Gecko/20100101 Firefox/135.0"
+        // var client_tid = "2TMcZdhGGDDq0VW553J1QgGIG2gOm/tt5EthIbfAov9Pzw1hNIyE+lYqiqOlt5CGdLzjtNpO4TqxM7jZ6cABUjiMWUAl2g"; 
+        // var client_uuid = "c737bd83-2f41-44bc-aa83-a28ddc2be085"; 
+        // // var csrf_token = getCookie("ct0");
+        // var random_resource = "uYU5M2i12UhDvDTzN6hZPg";
+        // var random_resource_old_tweets = "H8OOoI-5ZE4NxgRr8lfyWg"
+        // var language_code = navigator.language.split("-")[0]
+        // var tweets_to_delete = []
+        // // var user_id = getCookie("twid").substring(4);
+        // // replace with your username
+        // var stop_signal = undefined
+        // var twitter_archive_content = undefined
+        // var twitter_archive_loading_confirmed = false
     
-        var delete_options = {
-          /*  from_archive: If you downloaded your archive from Twitter, set this to true.
-              You will be prompt to upload the tweets.js file from it.
-            Advantage is that this is much more reliable and faster.
-            You can combine this with options: unretweet, match_any_keywords, tweets_to_ignore, after/before date
-            others will be ignored
-          */
-          "from_archive":false,
-          /*  unretweet: seems obvious, but it unretweet if set to true */
-          "unretweet":false,
-          /* do_not_remove_pinned_tweet: THIS CAN FAIL. Twitter has too many different way to format their response that I cannot guarantee this to work 100%
-            It should work for newer tweets. HOWEVER, use the "tweets_to_ignore" below and put in your pinned tweet ID, this will work 100%.
-            'why do you make this option then', this is a safeguard for people that forgot to add their pinned tweet in the ignore list.
-          */
-          "do_not_remove_pinned_tweet":false,
-          /* delete_message_with_url_only: self explanatory, but will delete tweets that contain links */
-          "delete_message_with_url_only":false,
-          /* delete_specific_ids_only: Array of tweet IDs that the script will delete. The script will not delete anything else than these IDs. Any other option will be ignored.
-            a tweet id is the number you see on the right of the url: https://x.com/USERNAME/status/1695001000000000
-            an example of how the array can look like : ["1695001000000000", "1303001000000000"] don't forget the quotes ""
-          */
-          "delete_specific_ids_only":[""],
-          /*
-            match_any_keywords : if any of the strings is found, delete the tweet. It's OR not AND. Example : ["hello", "hi", "yo"]
-            if no words are given, it will match all. Can be combined with delete_message_with_url_only
-            links shouldn't be used as keywords.
-          */
-          "match_any_keywords":[""],
-          /*
-            tweets_to_ignore : give all the tweet ids that you want to keep.
-            To find the id of the tweet, click on it, then copy the number you find in the url
-            it looks like that : https://x.com/USERNAME/status/1695001000000000, the id here is 1695001000000000
-            It expects strings, so add the double-quotes around it, like that : ["1695001000000000"], you can give multiple ids ofc it's an array
-          */
-          "tweets_to_ignore":[
-            "1", // these
-          ],
-          /* old_tweets : IF the script worked without any error but haven't deleted some old tweets, set this to true.*/
-          "old_tweets":false,
-          /*
-            after_date // before_date : allows you to delete tweets that belong in a specific time frame
-            In the example below, tweets that were made before 2100-01-01 AND after 1900-01-01 will be deleted. (these dates are not included. It's AFTER and BEFORE)
-            Let's say you want to delete tweets from past 6 months. Today is September 19th 2023.
-            You would set after_date to 2023-03-18 (effectively 6 months ago) and before_date 2023-09-20 (tomorrow's date. So it deletes tweets from today too) 
-          */
-          "after_date":new Date('2025-01-01'), 
-          "before_date":new Date('2025-04-09') 
-        }
-        
-        const { dateRange } = message.dateRange;
+        // var delete_options = {
+        //   /*  from_archive: If you downloaded your archive from Twitter, set this to true.
+        //       You will be prompt to upload the tweets.js file from it.
+        //     Advantage is that this is much more reliable and faster.
+        //     You can combine this with options: unretweet, match_any_keywords, tweets_to_ignore, after/before date
+        //     others will be ignored
+        //   */
+        //   "from_archive":false,
+        //   /*  unretweet: seems obvious, but it unretweet if set to true */
+        //   "unretweet":false,
+        //   /* do_not_remove_pinned_tweet: THIS CAN FAIL. Twitter has too many different way to format their response that I cannot guarantee this to work 100%
+        //     It should work for newer tweets. HOWEVER, use the "tweets_to_ignore" below and put in your pinned tweet ID, this will work 100%.
+        //     'why do you make this option then', this is a safeguard for people that forgot to add their pinned tweet in the ignore list.
+        //   */
+        //   "do_not_remove_pinned_tweet":false,
+        //   /* delete_message_with_url_only: self explanatory, but will delete tweets that contain links */
+        //   "delete_message_with_url_only":false,
+        //   /* delete_specific_ids_only: Array of tweet IDs that the script will delete. The script will not delete anything else than these IDs. Any other option will be ignored.
+        //     a tweet id is the number you see on the right of the url: https://x.com/USERNAME/status/1695001000000000
+        //     an example of how the array can look like : ["1695001000000000", "1303001000000000"] don't forget the quotes ""
+        //   */
+        //   "delete_specific_ids_only":[""],
+        //   /*
+        //     match_any_keywords : if any of the strings is found, delete the tweet. It's OR not AND. Example : ["hello", "hi", "yo"]
+        //     if no words are given, it will match all. Can be combined with delete_message_with_url_only
+        //     links shouldn't be used as keywords.
+        //   */
+        //   "match_any_keywords":[""],
+        //   /*
+        //     tweets_to_ignore : give all the tweet ids that you want to keep.
+        //     To find the id of the tweet, click on it, then copy the number you find in the url
+        //     it looks like that : https://x.com/USERNAME/status/1695001000000000, the id here is 1695001000000000
+        //     It expects strings, so add the double-quotes around it, like that : ["1695001000000000"], you can give multiple ids ofc it's an array
+        //   */
+        //   "tweets_to_ignore":[
+        //     "1", // these
+        //   ],
+        //   /* old_tweets : IF the script worked without any error but haven't deleted some old tweets, set this to true.*/
+        //   "old_tweets":false,
+        //   /*
+        //     after_date // before_date : allows you to delete tweets that belong in a specific time frame
+        //     In the example below, tweets that were made before 2100-01-01 AND after 1900-01-01 will be deleted. (these dates are not included. It's AFTER and BEFORE)
+        //     Let's say you want to delete tweets from past 6 months. Today is September 19th 2023.
+        //     You would set after_date to 2023-03-18 (effectively 6 months ago) and before_date 2023-09-20 (tomorrow's date. So it deletes tweets from today too) 
+        //   */
+        //   "after_date":new Date('2025-01-01'), 
+        //   "before_date":new Date('2025-04-09') 
+        // }
+        console.log(message);
+        const dateRange = message.dateRange;
         const { inputs } = message.inputs;
-        const searchInput = document.querySelector('[aria-label="Search query"]') as HTMLInputElement;
-
-        var username = inputs.username;
+        // const { cookies } = message.cookie;
+        const { bearer } = message.bearer;
+        // const searchInput = document.querySelector('[aria-label="Search query"]') as HTMLInputElement;
         
-        if (searchInput) {
-          // Format the search query with date range
-          const searchQuery = `since:${dateRange.start} until:${dateRange.end}`;
-          searchInput.value = searchQuery;
+        console.log(dateRange.start);
 
-          // Find and submit the form
-          const form = searchInput.closest('form');
-          if (form) {
-            form.submit();
-          }
+        // const start = dateRange.start;
+        // const end = dateRange.end;
+        // const username = inputs.username;
+        // const keywords = inputs.keywords;
+
+
+        // console.log(start, end, username, keywords, bearer);
+
+        // var username = inputs.username;
+        
+        // if (searchInput) {
+        //   // Format the search query with date range
+        //   const searchQuery = `since:${dateRange.start} until:${dateRange.end}`;
+        //   searchInput.value = searchQuery;
+
+        //   // Find and submit the form
+        //   const form = searchInput.closest('form');
+        //   if (form) {
+        //     form.submit();
+        //   }
           
-          searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-        }
+        //   searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+        // }
         
         function buildAcceptLanguageString() {
           const languages = navigator.languages;
@@ -409,263 +421,263 @@ export default defineContentScript({
         var next = null
         var entries = undefined
     
-        if (delete_options["from_archive"] == true) {
-          console.log("Waiting for user to load his Twitter archive")
+        // if (delete_options["from_archive"] == true) {
+        //   console.log("Waiting for user to load his Twitter archive")
     
-            // Create modal elements
-            const modal = document.createElement('div');
-            modal.id = 'myModal';
-            modal.className = 'modal';
+        //     // Create modal elements
+        //     const modal = document.createElement('div');
+        //     modal.id = 'myModal';
+        //     modal.className = 'modal';
     
-            const modalContent = document.createElement('div');
-            modalContent.className = 'modal-content';
+        //     const modalContent = document.createElement('div');
+        //     modalContent.className = 'modal-content';
     
-            const closeSpan = document.createElement('span');
-            closeSpan.className = 'close';
-            closeSpan.innerHTML = '&times;';
+        //     const closeSpan = document.createElement('span');
+        //     closeSpan.className = 'close';
+        //     closeSpan.innerHTML = '&times;';
     
-            const header = document.createElement('h2');
-            header.innerText = 'Drop Your File Here';
+        //     const header = document.createElement('h2');
+        //     header.innerText = 'Drop Your File Here';
     
-            const dropArea = document.createElement('div');
-            dropArea.id = 'drop-area';
-            dropArea.className = 'drop-area';
-            dropArea.innerHTML = '<p>Drop your tweets.js from your Twitter Archive here</p>';
+        //     const dropArea = document.createElement('div');
+        //     dropArea.id = 'drop-area';
+        //     dropArea.className = 'drop-area';
+        //     dropArea.innerHTML = '<p>Drop your tweets.js from your Twitter Archive here</p>';
     
-            // Append elements
-            modalContent.appendChild(closeSpan);
-            modalContent.appendChild(header);
-            modalContent.appendChild(dropArea);
-            modal.appendChild(modalContent);
-            document.body.appendChild(modal);
+        //     // Append elements
+        //     modalContent.appendChild(closeSpan);
+        //     modalContent.appendChild(header);
+        //     modalContent.appendChild(dropArea);
+        //     modal.appendChild(modalContent);
+        //     document.body.appendChild(modal);
     
-            // Add CSS styles
-            const styles = `
-                .modal {
-                    display: none;
-                    position: fixed;
-                    z-index: 1;
-                    left: 0;
-                    top: 0;
-                    width: 100%;
-                    height: 100%;
-                    overflow: auto;
-                    background-color: rgba(0,0,0,0.4);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-                .modal-content {
-                    background-color: #fff;
-                    margin: auto;
-                    padding: 20px;
-                    border-radius: 5px;
-                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-                    width: 400px;
-                    text-align: center;
-                }
-                .close {
-                    color: #aaa;
-                    position: absolute;
-                    top: 10px;
-                    right: 20px;
-                    font-size: 24px;
-                    font-weight: bold;
-                    cursor: pointer;
-                }
-                .close:hover {
-                    color: black;
-                }
-                .drop-area {
-                    border: 2px dashed #007bff;
-                    border-radius: 5px;
-                    padding: 60px;
-                    cursor: pointer;
-                    transition: .5s ease-in-out;
-                }
-                .drop-area:hover {
-                    border-color: #0056b3;
-              background-color: #dff3fb;
-              transition: .5s ease-in-out;
-                }
-            .drop-area.active {
-              background-color: #f3f4f6; /* Lighter background */
-              border-color: #4caf50; /* Green border */
-              color: #4caf50; /* Green text */
-            }
+        //     // Add CSS styles
+        //     const styles = `
+        //         .modal {
+        //             display: none;
+        //             position: fixed;
+        //             z-index: 1;
+        //             left: 0;
+        //             top: 0;
+        //             width: 100%;
+        //             height: 100%;
+        //             overflow: auto;
+        //             background-color: rgba(0,0,0,0.4);
+        //             display: flex;
+        //             align-items: center;
+        //             justify-content: center;
+        //         }
+        //         .modal-content {
+        //             background-color: #fff;
+        //             margin: auto;
+        //             padding: 20px;
+        //             border-radius: 5px;
+        //             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        //             width: 400px;
+        //             text-align: center;
+        //         }
+        //         .close {
+        //             color: #aaa;
+        //             position: absolute;
+        //             top: 10px;
+        //             right: 20px;
+        //             font-size: 24px;
+        //             font-weight: bold;
+        //             cursor: pointer;
+        //         }
+        //         .close:hover {
+        //             color: black;
+        //         }
+        //         .drop-area {
+        //             border: 2px dashed #007bff;
+        //             border-radius: 5px;
+        //             padding: 60px;
+        //             cursor: pointer;
+        //             transition: .5s ease-in-out;
+        //         }
+        //         .drop-area:hover {
+        //             border-color: #0056b3;
+        //       background-color: #dff3fb;
+        //       transition: .5s ease-in-out;
+        //         }
+        //     .drop-area.active {
+        //       background-color: #f3f4f6; /* Lighter background */
+        //       border-color: #4caf50; /* Green border */
+        //       color: #4caf50; /* Green text */
+        //     }
             
-            .drop-area.active p {
-              font-weight: bold;
-              color: #4caf50;
-            }
-                h2 {
-                    color: #333;
-                    margin-bottom: 20px;
-                }
-                p {
-                    margin: 0;
-                    color: #666;
-                }
-            confirm-button {
-              margin-top: 30px;
-              background-color: rgb(0, 116, 212);
-              border: 2px solid rgb(0, 116, 212);
-              border-radius: 3px;
-            }
-            `;
+        //     .drop-area.active p {
+        //       font-weight: bold;
+        //       color: #4caf50;
+        //     }
+        //         h2 {
+        //             color: #333;
+        //             margin-bottom: 20px;
+        //         }
+        //         p {
+        //             margin: 0;
+        //             color: #666;
+        //         }
+        //     confirm-button {
+        //       margin-top: 30px;
+        //       background-color: rgb(0, 116, 212);
+        //       border: 2px solid rgb(0, 116, 212);
+        //       border-radius: 3px;
+        //     }
+        //     `;
     
-            const styleSheet = document.createElement("style");
-            styleSheet.type = "text/css";
-            styleSheet.innerText = styles;
-            document.head.appendChild(styleSheet);
+        //     const styleSheet = document.createElement("style");
+        //     styleSheet.type = "text/css";
+        //     styleSheet.innerText = styles;
+        //     document.head.appendChild(styleSheet);
     
-            // Display modal
-            modal.style.display = 'flex';
+        //     // Display modal
+        //     modal.style.display = 'flex';
     
-            // Close modal on click
-            closeSpan.onclick = function() {
-                modal.style.display = 'none';
-            };
-            window.onclick = function(event) {
-                if (event.target === modal) {
-                    modal.style.display = 'none';
-                }
-            };
-          const confirmButton = document.createElement('button');
-          confirmButton.innerText = 'Confirm';
-          confirmButton.className = 'confirm-button';
-          confirmButton.style.marginTop = "5px"
+        //     // Close modal on click
+        //     closeSpan.onclick = function() {
+        //         modal.style.display = 'none';
+        //     };
+        //     window.onclick = function(event) {
+        //         if (event.target === modal) {
+        //             modal.style.display = 'none';
+        //         }
+        //     };
+        //   const confirmButton = document.createElement('button');
+        //   confirmButton.innerText = 'Confirm';
+        //   confirmButton.className = 'confirm-button';
+        //   confirmButton.style.marginTop = "5px"
     
-          // Append confirm button to modal content
-          modalContent.appendChild(confirmButton);
+        //   // Append confirm button to modal content
+        //   modalContent.appendChild(confirmButton);
     
-          // Confirm button event listener
-          confirmButton.addEventListener('click', () => {
-            if (twitter_archive_content) {
-              console.log("Confirmation received. File processed.");
-              twitter_archive_loading_confirmed = true
-              modal.style.display = 'none';
-              // Further processing can be done here
-            } else {
-              console.error("No file loaded. Please load a file before confirming.");
-            }
-          });
-            // Drag and Drop functionality
-            dropArea.addEventListener('dragover', (event) => {
-                event.stopPropagation();
-                event.preventDefault();
-                event.dataTransfer.dropEffect = 'copy';
-                dropArea.style.borderColor = '#0056b3';
-            });
+        //   // Confirm button event listener
+        //   confirmButton.addEventListener('click', () => {
+        //     if (twitter_archive_content) {
+        //       console.log("Confirmation received. File processed.");
+        //       twitter_archive_loading_confirmed = true
+        //       modal.style.display = 'none';
+        //       // Further processing can be done here
+        //     } else {
+        //       console.error("No file loaded. Please load a file before confirming.");
+        //     }
+        //   });
+        //     // Drag and Drop functionality
+        //     dropArea.addEventListener('dragover', (event) => {
+        //         event.stopPropagation();
+        //         event.preventDefault();
+        //         event.dataTransfer.dropEffect = 'copy';
+        //         dropArea.style.borderColor = '#0056b3';
+        //     });
     
-            dropArea.addEventListener('dragleave', (event) => {
-                dropArea.style.borderColor = '#007bff';
-            });
+        //     dropArea.addEventListener('dragleave', (event) => {
+        //         dropArea.style.borderColor = '#007bff';
+        //     });
     
-            dropArea.addEventListener('drop', (event) => {
-                event.stopPropagation();
-                event.preventDefault();
-                dropArea.style.borderColor = '#007bff';
-                const files = event.dataTransfer.files;
+        //     dropArea.addEventListener('drop', (event) => {
+        //         event.stopPropagation();
+        //         event.preventDefault();
+        //         dropArea.style.borderColor = '#007bff';
+        //         const files = event.dataTransfer.files;
     
-                // Process file here
-                console.log(files[0]);
-            });
+        //         // Process file here
+        //         console.log(files[0]);
+        //     });
     
-            // Click to upload functionality
-            dropArea.onclick = function() {
-                const fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.onchange = e => {
-                    // Process file here
-                    console.log(e.target.files[0]);
-                };
-                fileInput.click();
-            };
-          function readFile(file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-              const content = event.target.result;
+        //     // Click to upload functionality
+        //     dropArea.onclick = function() {
+        //         const fileInput = document.createElement('input');
+        //         fileInput.type = 'file';
+        //         fileInput.onchange = e => {
+        //             // Process file here
+        //             console.log(e.target.files[0]);
+        //         };
+        //         fileInput.click();
+        //     };
+        //   function readFile(file) {
+        //     const reader = new FileReader();
+        //     reader.onload = function(event) {
+        //       const content = event.target.result;
           
-              // Split by '=' and remove the first part
-              const parts = content.split('=');
-              parts.shift(); // Remove the first element
-              const jsonPart = parts.join('=').trim(); // Rejoin the rest and trim
+        //       // Split by '=' and remove the first part
+        //       const parts = content.split('=');
+        //       parts.shift(); // Remove the first element
+        //       const jsonPart = parts.join('=').trim(); // Rejoin the rest and trim
           
-              try {
-                const data = JSON.parse(jsonPart);
-                twitter_archive_content = data;
-                console.log("JSON data loaded into global variable.");
-              } catch (e) {
-                console.error("Error parsing JSON:", e);
-              }
-            };
-            reader.onerror = function(error) {
-              console.error("Error reading file:", error);
-            };
-            reader.readAsText(file); // Read the file as text
-          }
+        //       try {
+        //         const data = JSON.parse(jsonPart);
+        //         twitter_archive_content = data;
+        //         console.log("JSON data loaded into global variable.");
+        //       } catch (e) {
+        //         console.error("Error parsing JSON:", e);
+        //       }
+        //     };
+        //     reader.onerror = function(error) {
+        //       console.error("Error reading file:", error);
+        //     };
+        //     reader.readAsText(file); // Read the file as text
+        //   }
     
-            // Modify the drop event
-            dropArea.addEventListener('drop', (event) => {
-                // ... [existing event handler code] ...
-                const file = event.dataTransfer.files[0];
-                readFile(file);
-            });
+        //     // Modify the drop event
+        //     dropArea.addEventListener('drop', (event) => {
+        //         // ... [existing event handler code] ...
+        //         const file = event.dataTransfer.files[0];
+        //         readFile(file);
+        //     });
     
-            // Modify the file input change event
-            dropArea.onclick = function() {
-                const fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.onchange = e => {
-                    const file = e.target.files[0];
-                    readFile(file);
-                };
-                fileInput.click();
-            };
-          dropArea.addEventListener('dragover', (event) => {
-            event.stopPropagation();
-            event.preventDefault();
-            event.dataTransfer.dropEffect = 'copy';
-            dropArea.classList.add('active'); // Add 'active' class
-          });
+        //     // Modify the file input change event
+        //     dropArea.onclick = function() {
+        //         const fileInput = document.createElement('input');
+        //         fileInput.type = 'file';
+        //         fileInput.onchange = e => {
+        //             const file = e.target.files[0];
+        //             readFile(file);
+        //         };
+        //         fileInput.click();
+        //     };
+        //   dropArea.addEventListener('dragover', (event) => {
+        //     event.stopPropagation();
+        //     event.preventDefault();
+        //     event.dataTransfer.dropEffect = 'copy';
+        //     dropArea.classList.add('active'); // Add 'active' class
+        //   });
           
-          dropArea.addEventListener('dragleave', (event) => {
-            dropArea.classList.remove('active'); // Remove 'active' class
-          });
+        //   dropArea.addEventListener('dragleave', (event) => {
+        //     dropArea.classList.remove('active'); // Remove 'active' class
+        //   });
           
-          dropArea.addEventListener('drop', (event) => {
-            event.stopPropagation();
-            event.preventDefault();
-            dropArea.classList.remove('active'); // Remove 'active' class
-            // Rest of your drop event code...
-          });
-        }
+        //   dropArea.addEventListener('drop', (event) => {
+        //     event.stopPropagation();
+        //     event.preventDefault();
+        //     dropArea.classList.remove('active'); // Remove 'active' class
+        //     // Rest of your drop event code...
+        //   });
+        // }
     
-        if (delete_options["from_archive"] == true) {
-          while (twitter_archive_loading_confirmed == false) {
-            sleep(1000)
-          }
-          tweets_to_delete = parseTweetsFromArchive(twitter_archive_content)
-          console.log(tweets_to_delete)
-          delete_tweets(tweets_to_delete)
-        }
+        // if (delete_options["from_archive"] == true) {
+        //   while (twitter_archive_loading_confirmed == false) {
+        //     sleep(1000)
+        //   }
+        //   tweets_to_delete = parseTweetsFromArchive(twitter_archive_content)
+        //   console.log(tweets_to_delete)
+        //   delete_tweets(tweets_to_delete)
+        // }
     
     
-        else if (delete_options["delete_specific_ids_only"].length == 1 && delete_options["delete_specific_ids_only"][0].length == 0) {
-          while (next != "finished" && stop_signal != true) {
-            entries = fetch_tweets(next);
-            next = og_tweets(entries);
-            delete_tweets(tweets_to_delete)
-            tweets_to_delete = []
-            sleep(3000);
-          }
-        }
-        else {
-          delete_tweets(delete_options["delete_specific_ids_only"]);
-        }
+        // else if (delete_options["delete_specific_ids_only"].length == 1 && delete_options["delete_specific_ids_only"][0].length == 0) {
+        //   while (next != "finished" && stop_signal != true) {
+        //     entries = fetch_tweets(next);
+        //     next = og_tweets(entries);
+        //     delete_tweets(tweets_to_delete)
+        //     tweets_to_delete = []
+        //     sleep(3000);
+        //   }
+        // }
+        // else {
+        //   delete_tweets(delete_options["delete_specific_ids_only"]);
+        // }
     
-        console.log("DELETION COMPLETE (if error happened before this may be not true)")
+        // console.log("DELETION COMPLETE (if error happened before this may be not true)")
       
       }
     });

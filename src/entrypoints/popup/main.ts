@@ -1,3 +1,8 @@
+let auth_token = "";
+let csrf_token = "";
+let user_id = "";
+
+
 // Handles click event for getting API-Key
 document.getElementById('get-key').addEventListener('click', () => {
 	browser.runtime.sendMessage({ action: 'getCookies' }, response => {
@@ -12,19 +17,18 @@ document.getElementById('get-key').addEventListener('click', () => {
 			output.textContent = "Failed to get key! Please try again.";
 		}
 		
-		console.log(output);
-		let auth_token = output[0];
-		let csrf_token = output[1];
-		let user_id = output[3];
-		console.log(auth_token, csrf_token, user_id);
-	});
+		console.log("get-key");
+		auth_token = output[0];
+		csrf_token = output[1];
+		user_id = output[3];
+	})
 });
 
 
 // Handles copying the key using the button
-document.getElementById('copy-key').addEventListener('click', () => {
-	navigator.clipboard.writeText(document.getElementById('key-output').value);
-})
+// document.getElementById('copy-key').addEventListener('click', () => {
+// 	navigator.clipboard.writeText(document.getElementById('key-output').value);
+// })
 
 function buildAcceptLanguageString() {
 	const languages = navigator.languages;
@@ -69,24 +73,30 @@ startDateInput.value = thirtyDaysAgo.toISOString().split('T')[0];
 endDateInput.value = today.toISOString().split('T')[0];
 
 searchButton.addEventListener('click', () => {    
-    browser.tabs.query({
-        active: true,
-        currentWindow: true
-    }, function (tabs) {
-        browser.runtime.sendMessage({ 
-            action: "insertString", 
-            data: { 
-                tab: tabs[0],
-                dateRange: {
-                    start: startDateInput.value,
-                    end: endDateInput.value
-                },
+	console.log("search");
+	browser.tabs.query({
+		active: true,
+		currentWindow: true
+	}, function (tabs) {
+		browser.runtime.sendMessage({ 
+			action: "deleteTweets", 
+			data: { 
+				tab: tabs[0],
+				dateRange: {
+					start: startDateInput.value,
+					end: endDateInput.value
+				},
 				inputs: {
 					username: usernameInput.value,
 					keywords: keywordsInput.value
+				},
+				cookies: {
+					auth: auth_token,
+					csrf: csrf_token,
+					user_id: user_id
 				}
-            }
-        });
-    });
+			}
+		});
+	});
 });
   
