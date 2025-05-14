@@ -97,8 +97,9 @@ export default defineBackground(() => {
   browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "deleteTweets") {
       const { tab, cookies, dateRange, inputs } = request.data;
+      console.log(cookies);
       deleteTweets(tab, bearer_token, cookies, dateRange, inputs);
-      console.log("send to script");
+
   }
       // if (request.action === 'insertString') {
       //   getCookies().then(key => {

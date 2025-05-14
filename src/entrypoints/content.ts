@@ -5,6 +5,12 @@ export default defineContentScript({
     // Listen for messages from background script
     browser.runtime.onMessage.addListener((message) => {
       if (message.action === "deleteTweets") {
+
+        /**
+         * TODO
+         * need to get authorization, ua, client_tid, client_uuid, csrf_token, user_d, & username
+         */
+
         // var authorization = "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA";
         // var ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:135.0) Gecko/20100101 Firefox/135.0"
         // var client_tid = "2TMcZdhGGDDq0VW553J1QgGIG2gOm/tt5EthIbfAov9Pzw1hNIyE+lYqiqOlt5CGdLzjtNpO4TqxM7jZ6cABUjiMWUAl2g"; 
@@ -68,14 +74,21 @@ export default defineContentScript({
         //   "after_date":new Date('2025-01-01'), 
         //   "before_date":new Date('2025-04-09') 
         // }
-        console.log(message);
+      
         const dateRange = message.dateRange;
-        const { inputs } = message.inputs;
-        // const { cookies } = message.cookie;
-        const { bearer } = message.bearer;
+        const start = dateRange.start;
+        const end = dateRange.end;
+
+        const inputs = message.inputs;
+        const username = inputs.username;
+        const keywords = inputs.keywords;
+
+        const cookies = message.cookies;
+        const bearer = message.bearer;
         // const searchInput = document.querySelector('[aria-label="Search query"]') as HTMLInputElement;
         
-        console.log(dateRange.start);
+        console.log(cookies);
+        console.log(bearer);
 
         // const start = dateRange.start;
         // const end = dateRange.end;
@@ -678,7 +691,7 @@ export default defineContentScript({
         // }
     
         // console.log("DELETION COMPLETE (if error happened before this may be not true)")
-      
+        console.log("end of delete script");
       }
     });
 
