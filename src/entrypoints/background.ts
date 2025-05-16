@@ -1,121 +1,141 @@
+import type { WebRequest } from 'webextension-polyfill';
+
 export default defineBackground(() => {
   browser.runtime.onInstalled.addListener(() => {
-    console.log('X Auth Helper installed!');
+    console.log('Deleter installed!');
   });
   
-  /**
-  * The domain whose cookies are to be fetched.
-  */
   const domain = 'x.com';
   let bearer_token = "";
 
-  /**
-  * Gets cookies for x.com and encoding them to base64.
-  */
-  async function getCookies() {
-    // Getting the cookies for the given domain
-    let cookies = await browser.cookies.getAll({ domain: domain });
-    // console.log(cookies);
-    // Filter out required cookies
-    cookies = cookies.filter(item => item.name == 'auth_token' || item.name == 'ct0' || item.name == 'kdt' || item.name == 'twid');
-
-    /** Stores the key */
-    let key: string[] = [];
-
-    // If all required cookies are present
-    if (cookies.length == 4) {
-      // Appending all cookies to a cookie string
-      for (const {name, value} of cookies) {
-        key.push(value);
-      }
-
-      // Encoding the cookies to base64 to get key
-      // key = btoa(key);
-    }
-
-    // console.log(key);
-    return key;
-
+  interface Cookie {
+    name: string;
+    value: string;
   }
 
-  //get http request headers
-  function getHeaders(e) {
-    let bearer = "";
-    let headers = e.requestHeaders;
-    if (headers["domain"] == domain) {
-        bearer = headers["bearer"];
-        
-    }
+  interface RequestHeaders {
+    requestHeaders?: WebRequest.HttpHeaders;
+  }
 
-    bearer_token = headers[1].value
+  interface Tab {
+    id: number;
+    url: string;
+  }
+
+  interface DateRange {
+    start: string;
+    end: string;
+  }
+
+  interface UserInputs {
+    username: string;
+    keywords: string;
+  }
+
+  async function getCookies(): Promise<string[]> {
+    try {
+      const cookies = await browser.cookies.getAll({ domain: domain });
+      const requiredCookies = ['auth_token', 'ct0', 'kdt', 'twid'];
+      
+      // Filter and validate required cookies
+      const filteredCookies = cookies.filter(item => 
+        requiredCookies.includes(item.name) && 
+        item.value && 
+        item.value.length > 0
+      );
+
+      if (filteredCookies.length !== requiredCookies.length) {
+        throw new Error('Missing required cookies');
+      }
+
+      return filteredCookies.map(cookie => cookie.value);
+    } catch (error) {
+      console.error('Error getting cookies:', error);
+      return [];
+    }
+  }
+
+  function getHeaders(e: WebRequest.OnBeforeSendHeadersDetailsType): void {
+    try {
+      const headers = e.requestHeaders;
+      if (!headers) return;
+      
+      const bearerHeader = headers.find((h) => h.name.toLowerCase() === 'authorization');
+      
+      if (bearerHeader?.value && bearerHeader.value.startsWith('Bearer ')) {
+        bearer_token = bearerHeader.value.split(' ')[1];
+      }
+    } catch (error) {
+      console.error('Error processing headers:', error);
+    }
   }
 
   browser.webRequest.onBeforeSendHeaders.addListener(
     getHeaders,
-    {urls: ["<all_urls>"]},
+    {urls: [`*://${domain}/*`]},
     ["requestHeaders"],
   );
 
-
-  // Listener for messages from popup
   browser.runtime.onMessage.addListener((request, sender, respond) => {
     if (request.action === 'getCookies') {
       getCookies().then(key => {
-        // If key generation was successful
         if (key.length) {
-          respond({ success: true, key: key })
+          respond({ success: true, key: key });
+        } else {
+          respond({ success: false, error: 'Failed to get cookies' });
         }
-        // If key generation failed
-        else {
-          throw new Error();
-        }
-      }).catch(err => respond({ success: false }));
-        
+      }).catch(err => respond({ success: false, error: err.message }));
       return true;
     }
   }); 
 
+  async function deleteTweets(
+    tab: Tab, 
+    bearer: string, 
+    cookies: string[], 
+    dateRange: DateRange, 
+    inputs: UserInputs
+  ): Promise<void> {
+    try {
+      // Validate tab URL
+      if (!tab.url.startsWith(`https://${domain}`)) {
+        throw new Error('Invalid tab domain');
+      }
 
-  function deleteTweets(tab, bearer, cookies, dateRange: { start: string, end: string }, inputs: {username: string, keywords: string}) {
-    // First inject the content script
-    browser.scripting.executeScript({
-      target: { tabId: tab.id },
-      files: ['./content-scripts/content.js'],
-    }).then(() => {
-      // After injection, send the dateRange to the content script
-      browser.tabs.sendMessage(tab.id, {
+      // Validate inputs
+      if (!bearer || !cookies.length || !dateRange.start || !dateRange.end) {
+        throw new Error('Missing required parameters');
+      }
+
+      await browser.scripting.executeScript({
+        target: { tabId: tab.id },
+        files: ['./content-scripts/content.js'],
+      });
+
+      await browser.tabs.sendMessage(tab.id, {
         action: "deleteTweets",
-        bearer: bearer,
-        cookies: cookies,
-        dateRange: dateRange,
-        inputs: inputs
+        bearer,
+        cookies,
+        dateRange,
+        inputs
       });    
-    });
-  }
-
-  //same but experimental
-  browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.action === "deleteTweets") {
-      const { tab, cookies, dateRange, inputs } = request.data;
-      console.log(cookies);
-      deleteTweets(tab, bearer_token, cookies, dateRange, inputs);
-
-  }
-      // if (request.action === 'insertString') {
-      //   getCookies().then(key => {
-      //     // If key generation was successful
-      //     if (key.length) {
-      //       respond({ success: true, key: key })
-      //     }
-      //     // If key generation failed
-      //     else {
-      //       throw new Error();
-      //     }
-      //   }).catch(err => respond({ success: false }));
-          
-      //   return true;
-      // };
+    } catch (error) {
+      console.error('Error in deleteTweets:', error);
     }
-  );
+  }
 
+  function sendToContentScript(request: any, cookies: string[]): void {
+    try {
+      if (request.action === "deleteTweets") {
+        const { tab, dateRange, inputs } = request.data;
+        deleteTweets(tab, bearer_token, cookies, dateRange, inputs);
+      }
+    } catch (error) {
+      console.error('Error in sendToContentScript:', error);
+    }
+  }
+
+  browser.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    getCookies().then(key => sendToContentScript(request, key));
+  });
 });

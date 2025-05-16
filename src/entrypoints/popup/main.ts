@@ -22,23 +22,31 @@ endDateInput.value = today.toISOString().split('T')[0];
  * values figure out why
  */
 
-searchButton.addEventListener('click', () => {    
-	browser.runtime.sendMessage({ action: 'getCookies' }, response => {
-		// Getting the output area
-		let output = "";
+// function receivedCookies(message)
+// {
+// 	let cookies = "";
+// 	console.log(cookies);
 		
-		if (response.success) {
-			// let decoded = atob(response.key);
-			output = response.key;
-		}
-		else {
-			output = "Failed to get key! Please try again.";
-		}
+// 	if (message.success) {
+// 		// let decoded = atob(response.key);
+// 		cookies = message.key;
+// 	}
+// 	else {
+// 		cookies = "Failed to get key! Please try again.";
+// 	}
 		
-		auth_token = output[0];
-		csrf_token = output[1];
-		user_id = output[3];
-	});
+// 	auth_token = cookies[0];
+// 	csrf_token = cookies[1];
+// 	user_id = cookies[3];
+// }
+
+searchButton.addEventListener('click', () => {    	
+	// console.log("zero");
+	// browser.runtime.sendMessage({ action: 'getCookies' });
+
+	// browser.runtime.onMessage.addListener(receivedCookies);
+
+	// console.log(auth_token + " three");
 
 	browser.tabs.query({
 		active: true,

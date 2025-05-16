@@ -84,35 +84,13 @@ export default defineContentScript({
         const keywords = inputs.keywords;
 
         const cookies = message.cookies;
+        const auth = cookies.auth;
+        const csrf = cookies.csrf;
+        const user_id = cookies.user_id;
+
+        console.log(cookies[0]);
+
         const bearer = message.bearer;
-        // const searchInput = document.querySelector('[aria-label="Search query"]') as HTMLInputElement;
-        
-        console.log(cookies);
-        console.log(bearer);
-
-        // const start = dateRange.start;
-        // const end = dateRange.end;
-        // const username = inputs.username;
-        // const keywords = inputs.keywords;
-
-
-        // console.log(start, end, username, keywords, bearer);
-
-        // var username = inputs.username;
-        
-        // if (searchInput) {
-        //   // Format the search query with date range
-        //   const searchQuery = `since:${dateRange.start} until:${dateRange.end}`;
-        //   searchInput.value = searchQuery;
-
-        //   // Find and submit the form
-        //   const form = searchInput.closest('form');
-        //   if (form) {
-        //     form.submit();
-        //   }
-          
-        //   searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-        // }
         
         function buildAcceptLanguageString() {
           const languages = navigator.languages;
